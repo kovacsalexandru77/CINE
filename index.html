@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JobbMintATv – CineNuovo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+  <style>
+    body { margin:0; background:black; color:white; font-family:Arial; }
+    header {
+      background: rgba(0,0,0,0.85);
+      padding:10px 20px;
+      display:flex;
+      justify-content:flex-start;
+      align-items:center;
+      gap: 20px;
+      position:sticky;
+      top:0;
+      z-index:1000;
+      margin-left: 60px;
+    }
+    h1 { margin:0; color:cyan; font-size:22px; }
+    #categorySelect {
+      padding:6px 10px;
+      font-size:15px;
+      background:rgba(0,0,0,0.6);
+      color:white;
+      border:2px solid cyan;
+      border-radius:6px;
+    }
+    #movies {
+      display:grid;
+      grid-template-columns:repeat(5, 1fr);
+      gap:15px;
+      padding:15px;
+      margin-left: 60px;
+    }
+    .movie {
+      background:rgba(0,0,0,0.6);
+      border:2px solid deepskyblue;
+      border-radius:10px;
+      overflow:hidden;
+      cursor:pointer;
+      transition:0.3s;
+    }
+    .movie:hover {
+      transform:scale(1.05);
+      box-shadow:0 0 15px cyan;
+    }
+    .movie img {
+      width:100%;
+      height:240px;
+      object-fit:cover;
+      display:block;
+    }
+    .movie-title {
+      text-align:center;
+      padding:8px;
+      font-size:14px;
+      color:cyan;
+    }
+    #preloader {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: cyan;
+      font-weight: bold;
+      font-size: 18px;
+      z-index: 2000;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px 40px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 60px;
+      background-color: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 8px;
+      z-index: 1000;
+    }
+    .sidebar a {
+      color: #00f7ff;
+      font-size: 24px;
+      margin: 8px 0;
+      transition: transform 0.3s, color 0.3s, text-shadow 0.3s;
+      text-decoration:none;
+    }
+    .sidebar a:hover {
+      color: #ff00ff;
+      transform: scale(1.3);
+      text-shadow: 0 0 10px #ff00ff;
+    }
+    .clock {
+      position: fixed;
+      top: 4px;
+      right: 17px;
+      font-size: 16px;
+      color: cyan !important;
+      font-weight: bold;
+      z-index: 1100;
+      text-shadow: 0 0 8px cyan;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    #playerModal {
+      position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:rgba(0,0,0,0.95);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      z-index:9999;
+    }
+    #playerModal.show { display:flex; }
+    #playerIframe {
+      width:100%;
+      height:100%;
+      border:none;
+      background:black;
+    }
+    #closeBtn {
+      position:absolute;
+      bottom:20px;
+      right:30px;
+      font-size:20px;
+      color:white;
+      border-radius:50%;
+      padding:5px 10px;
+      cursor:pointer;
+      transition: 0.3s;
+    }
+    #closeBtn:hover {
+      background:red;
+      box-shadow:0 0 15px #ff4040;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+<div class="sidebar">
+  <a href="#" onclick="changeCategory('https://www.cinenuovo.hu/tag/akciofilm/')" title="Akció"><i class="bi bi-lightning-fill"></i></a>
+  <a href="#" onclick="changeCategory('https://www.cinenuovo.hu/tag/animacios/')" title="Animáció"><i class="bi bi-palette-fill"></i></a>
+  <a href="#" onclick="changeCategory('https://www.cinenuovo.hu/tag/csaladi-film/')" title="Családi"><i class="bi bi-house-heart"></i></a>
+  <a href="#" onclick="changeCategory('https://www.cinenuovo.hu/tag/drama/')" title="Dráma"><i class="bi bi-theater-masks"></i></a>
+  <a href="#" onclick="changeCategory('https://www.cinenuovo.hu/tag/horror/')" title="Horror"><i class="bi bi-emoji-dizzy"></i></a>
+  <a href="#" onclick="changeCategory('https://www.cinenuovo.hu/tag/kalandfilm/')" title="Kaland"><i class="bi bi-compass"></i></a>
+  <a href="#" onclick="changeCategory('https://www.cinenuovo.hu/tag/krimi/')" title="Krimi"><i class="bi bi-shield-lock"></i></a>
+  <a href="#" onclick="changeCategory('https://www.cinenuovo.hu/tag/thriller/')" title="Thriller"><i class="bi bi-lightning"></i></a>
+  <a href="#" onclick="changeCategory('https://www.cinenuovo.hu/tag/vigjatek/')" title="Vígjáték"><i class="bi bi-emoji-smile"></i></a>
+</div>
+
+<header>
+  <select id="categorySelect" onchange="changeCategory(this.value)">
+    <option value="https://www.cinenuovo.hu/uj-filmek/">Új filmek</option>
+    <option value="https://www.cinenuovo.hu/tag/akciofilm/">Akció</option>
+    <option value="https://www.cinenuovo.hu/tag/animacios/">Animációs</option>
+    <option value="https://www.cinenuovo.hu/tag/csaladi-film/">Családi</option>
+    <option value="https://www.cinenuovo.hu/tag/drama/">Dráma</option>
+    <option value="https://www.cinenuovo.hu/tag/horror/">Horror</option>
+    <option value="https://www.cinenuovo.hu/tag/kalandfilm/">Kaland</option>
+    <option value="https://www.cinenuovo.hu/tag/krimi/">Krimi</option>
+    <option value="https://www.cinenuovo.hu/tag/thriller/">Thriller</option>
+    <option value="https://www.cinenuovo.hu/tag/vigjatek/">Vígjáték</option>
+  </select>
+  <h1>Cɪɴᴇᴍᴀꜰɪʟᴍᴇᴋ Sᴀɴᴅᴜ▶</h1>
+  <div class="clock" id="clock">--:--:--</div>
+</header>
+
+<div id="preloader">Betöltés...</div>
+<div id="movies"></div>
+<div id="loadMoreBtn" style="text-align:center; margin: 20px 0 40px 80px;">
+  <button onclick="loadMoreMovies()" style="padding:10px 20px; font-size:16px; background:cyan; color:black; border:none; border-radius:8px; cursor:pointer; box-shadow:0 0 10px cyan;">
+    Több film betöltése
+  </button>
+</div>
+
+<div id="playerModal">
+  <iframe id="playerIframe" allowfullscreen allow="autoplay; fullscreen" referrerpolicy="no-referrer"></iframe>
+  <div id="closeBtn" onclick="closeModal()">✕</div>
+</div>
+
+<script>
+const proxy = "https://api.allorigins.win/get?url=";
+let currentCategory = "https://www.cinenuovo.hu/uj-filmek/";
+let currentPage = 1;
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById("clock").textContent = now.toLocaleTimeString("hu-HU", { hour12: false });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+function changeCategory(url) {
+  currentCategory = url;
+  currentPage = 1;
+  document.getElementById("movies").innerHTML = "";
+  fetchMovies(currentPage);
+}
+
+function loadMoreMovies() {
+  currentPage++;
+  fetchMovies(currentPage);
+}
+
+function fetchMovies(page = 1) {
+  document.getElementById("preloader").style.display = "block";
+  let url = currentCategory.endsWith("/") ? currentCategory + "page/" + page + "/" : currentCategory + "/page/" + page + "/";
+  fetch(proxy + encodeURIComponent(url))
+    .then(res => res.json())
+    .then(data => {
+      const doc = new DOMParser().parseFromString(data.contents, "text/html");
+      const items = doc.querySelectorAll("article.post");
+      const container = document.getElementById("movies");
+      items.forEach(item => {
+        const link = item.querySelector("h2 a")?.href;
+        const img = item.querySelector("img")?.src;
+        const title = item.querySelector("h2 a")?.textContent.trim();
+        if (link && img && title) {
+          const div = document.createElement("div");
+          div.className = "movie";
+          div.onclick = () => loadPlayer(link);
+          const imgEl = document.createElement("img");
+          imgEl.src = img;
+          imgEl.alt = title;
+          const titleEl = document.createElement("div");
+          titleEl.className = "movie-title";
+          titleEl.textContent = title;
+          div.appendChild(imgEl);
+          div.appendChild(titleEl);
+          container.appendChild(div);
+        }
+      });
+      document.getElementById("preloader").style.display = "none";
+    })
+    .catch(err => {
+      document.getElementById("preloader").textContent = "Hiba történt a betöltéskor.";
+      console.error(err);
+    });
+}
+
+function loadPlayer(link) {
+  document.getElementById("preloader").style.display = "block";
+  fetch(proxy + encodeURIComponent(link))
+    .then(res => res.json())
+    .then(data => {
+      const doc = new DOMParser().parseFromString(data.contents, "text/html");
+      let src = "";
+
+      const videoDiv = doc.querySelector('div.video-container[onclick]');
+      if (videoDiv) {
+        const onclickValue = videoDiv.getAttribute("onclick");
+        const match = onclickValue.match(/'(.*?)'/);
+        if (match) {
+          src = match[1];
+          if (src.startsWith("//")) src = "https:" + src;
+          if (!src.includes("autoplay=1")) {
+            src += (src.includes("?") ? "&" : "?") + "autoplay=1";
+          }
+        }
+      }
+
+      if (src) {
+        document.getElementById("playerIframe").src = src;
+        document.getElementById("playerModal").classList.add("show");
+      } else {
+        alert("Ehhez a filmhez nem találtunk támogatott lejátszót.");
+      }
+
+      document.getElementById("preloader").style.display = "none";
+    })
+    .catch(err => {
+      console.error("Hiba:", err);
+      document.getElementById("preloader").style.display = "none";
+    });
+}
+
+function closeModal() {
+  document.getElementById("playerModal").classList.remove("show");
+  document.getElementById("playerIframe").src = "";
+}
+
+fetchMovies();
+</script>
+</body>
+</html>
