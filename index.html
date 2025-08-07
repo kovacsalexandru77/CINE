@@ -66,7 +66,6 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 2000;
-      background: rgba(0, 0, 0, 0.8);
       padding: 20px 40px;
       border-radius: 12px;
       text-align: center;
@@ -74,7 +73,7 @@
       pointer-events: none;
     }
     .txt-loading {
-      font-size: 28px;
+      font-size: 38px;
       font-weight: bold;
       color: #00ff00;
       text-shadow: 0 0 8px #00ff00, 0 0 20px #00ff00;
@@ -101,6 +100,18 @@
     @keyframes blink {
       0% { opacity: 0; }
       100% { opacity: 1; }
+    }
+    .spinner {
+      border: 6px solid #333;
+      border-top: 6px solid cyan;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     /* Sidebar, clock és többi stílus változatlanul maradt, csak a színek zöld neonra */
@@ -246,7 +257,7 @@
 <div id="movies"></div>
 <div id="loadMoreBtn" style="text-align:center; margin: 20px 0 40px 80px;">
   <button onclick="loadMoreMovies()" style="padding:10px 20px; font-size:16px; background:#00ff00; color:black; border:none; border-radius:8px; cursor:pointer; box-shadow:0 0 10px #00ff00;">
-    TőBBᕗ
+    Tőbbᕗ
   </button>
 </div>
 
