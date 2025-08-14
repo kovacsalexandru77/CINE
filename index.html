@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cinema Sandu Online HD</title>
-  <meta name="description" content="Cinema Sandu - creat de Sandu.">
+  <meta name="description" content="Cinema Sandu - Vizionează filme și seriale online gratuit în română HD. Colecție vastă de filme din toate genurile - creat de Sandu.">
   <meta name="author" content="Sandu">
-  <meta name="keywords" content="filmeonline, seriale online, cinema sandu, filme romanesti, filme HD">
+  <meta name="keywords" content="filme online, seriale online, cinema sandu, filme romanesti, filme HD, filme gratis">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
   <style>
@@ -547,6 +547,18 @@
         margin-right: 0;
       }
     }
+    .sidebar a i {
+  font-size: 28px; /* nagyobb ikonok */
+  animation: neonCycle 3s linear infinite;
+}
+
+@keyframes neonCycle {
+  0%   { color: cyan;    text-shadow: 0 0 5px cyan, 0 0 10px cyan; }
+  25%  { color: lime;    text-shadow: 0 0 5px lime, 0 0 10px lime; }
+  50%  { color: yellow;  text-shadow: 0 0 5px yellow, 0 0 10px yellow; }
+  75%  { color: magenta; text-shadow: 0 0 5px magenta, 0 0 10px magenta; }
+  100% { color: cyan;    text-shadow: 0 0 5px cyan, 0 0 10px cyan; }
+}
   </style>
 </head>
 <body>
